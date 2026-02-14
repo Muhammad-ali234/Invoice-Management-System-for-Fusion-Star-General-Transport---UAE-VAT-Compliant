@@ -19,6 +19,7 @@ import { SettingsPage } from './pages/SettingsPage';
 import TrucksPage from './pages/TrucksPage';
 import DriversPage from './pages/DriversPage';
 import ContractsPage from './pages/ContractsPage';
+import BillingPage from './pages/BillingPage';
 
 /**
  * ProtectedRoute component
@@ -101,6 +102,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <ContractsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/billing"
+            element={
+              <ProtectedRoute>
+                <BillingPage />
               </ProtectedRoute>
             }
           />

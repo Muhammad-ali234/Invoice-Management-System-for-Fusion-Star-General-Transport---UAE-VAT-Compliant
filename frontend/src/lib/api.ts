@@ -213,3 +213,18 @@ export const contractsApi = {
       method: 'POST',
     }),
 };
+
+// Billing API
+export const billingApi = {
+  getStatus: () => fetchApi('/billing/status'),
+  
+  getContractsDue: () => fetchApi('/billing/contracts-due'),
+  
+  processBilling: () =>
+    fetchApi('/billing/process', {
+      method: 'POST',
+    }),
+  
+  getHistory: (limit = 50) =>
+    fetchApi(`/billing/history?limit=${limit}`),
+};
