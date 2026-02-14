@@ -1,0 +1,120 @@
+// API client for backend communication
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+
+class ApiError extends Error {
+  constructor(public status: number, message: string) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
+async function fetchApi(endpoint: string, options: RequestInit = {}) {
+  const token = localStorage.getItem('token');
+  
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const response = await fetch(`${API_URL}${endpoint}`, {
+    ...options,
+    headers: {
+      ...headers,
+      ...options.headers,
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: 'Request failed' }));
+    throw new ApiError(response.status, error.error || 'Request failed');
+  }
+
+  return response.json();
+}
+
+// Note: Backend expects camelCase in request body, returns snake_case from database
+// No conversion needed for requests
+
+// Auth API
+export const authApi = {
+  login: (email: string, password: string) =>
+    fetchApi('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+    }),
+
+  register: (email: string, password: string) =>
+    fetchApi('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+    }),
+};
+
+// Customers API
+export const customersApi = {
+  getAll: () => fetchApi('/customers'),
+  
+  create: (data: any) =>
+    fetchApi('/customers', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  update: (id: number, data: any) =>
+    fetchApi(`/customers/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+
+  delete: (id: number) =>
+    fetchApi(`/customers/${id}`, {
+      method: 'DELETE',
+    }),
+};
+
+// Invoices API
+export const invoicesApi = {
+  getAll: () => fetchApi('/invoices'),
+  
+  getOne: (id: number) => fetchApi(`/invoices/${id}`),
+
+  create: (data: any) =>
+    fetchApi('/invoices', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  update: (id: number, data: any) =>
+    fetchApi(`/invoices/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+
+  delete: (id: number) =>
+    fetchApi(`/invoices/${id}`, {
+      method: 'DELETE',
+    }),
+};
+
+// Payments API
+export const paymentsApi = {
+  getAll: () => fetchApi('/payments'),
+  
+  getForInvoice: (invoiceId: number) =>
+    fetchApi(`/payments?invoiceId=${invoiceId}`),
+
+  create: (data: any) =>
+    fetchApi('/payments', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  delete: (id: number, invoiceId: number) =>
+    fetchApi(`/payments/${id}?invoiceId=${invoiceId}`, {
+      method: 'DELETE',
+    }),
+};

@@ -1,0 +1,7 @@
+Add these dependencies to frontend/package.json:
+
+"jspdf": "^2.5.1",
+"jspdf-autotable": "^3.8.2",
+"html2canvas": "^1.4.1"
+
+Run: npm install jspdf jspdf-autotable html2canvas
