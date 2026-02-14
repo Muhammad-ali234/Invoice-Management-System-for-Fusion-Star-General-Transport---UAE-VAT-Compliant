@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Plus, Truck as TruckIcon, Edit2, Trash2, Filter } from 'lucide-react';
+import { Layout } from '@/components/layout/Layout';
 import { useTrucks } from '@/hooks/useTrucks';
 import { Button } from '@/components/common/Button';
 import { Modal } from '@/components/common/Modal';
 import { Loading } from '@/components/common/Loading';
-import TruckForm from '@/components/forms/TruckForm';
+import TruckForm from '../components/forms/TruckForm';
 import { Truck } from '@/types';
 
 export default function TrucksPage() {
@@ -43,10 +44,11 @@ export default function TrucksPage() {
     return styles[status as keyof typeof styles] || 'bg-gray-100 text-gray-800';
   };
 
-  if (isLoading) return <Loading />;
+  if (isLoading) return <Layout title="Trucks"><Loading /></Layout>;
 
   return (
-    <div className="space-y-6">
+    <Layout title="Trucks">
+      <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
@@ -223,6 +225,7 @@ export default function TrucksPage() {
           </div>
         </div>
       </Modal>
-    </div>
+      </div>
+    </Layout>
   );
 }
