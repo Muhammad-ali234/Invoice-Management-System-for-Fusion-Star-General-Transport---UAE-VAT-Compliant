@@ -17,6 +17,7 @@ import truckRoutes from './routes/trucks.js';
 import driverRoutes from './routes/drivers.js';
 import contractRoutes from './routes/contracts.js';
 import billingRoutes from './routes/billing.js';
+import expenseRoutes from './routes/expenses.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import pool from './config/database.js';
 import { startRecurringBillingCron } from './jobs/recurringBillingCron.js';
@@ -84,6 +85,7 @@ app.use('/api/trucks', truckRoutes);
 app.use('/api/drivers', driverRoutes);
 app.use('/api/contracts', contractRoutes);
 app.use('/api/billing', billingRoutes);
+app.use('/api/expenses', expenseRoutes);
 
 // 404 handler
 app.use((req, res) => {
