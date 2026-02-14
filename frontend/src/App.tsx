@@ -16,6 +16,7 @@ import { InvoiceEditPage } from './pages/InvoiceEditPage';
 import { PaymentsPage } from './pages/PaymentsPage';
 import { ReportsPage } from './pages/ReportsPage';
 import { SettingsPage } from './pages/SettingsPage';
+import TrucksPage from './pages/TrucksPage';
 
 /**
  * ProtectedRoute component
@@ -74,6 +75,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <ProductsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/trucks"
+            element={
+              <ProtectedRoute>
+                <TrucksPage />
               </ProtectedRoute>
             }
           />

@@ -10,6 +10,8 @@ export interface Customer {
   address?: string;
   city?: string;
   country?: string;
+  trn_number?: string;
+  is_vat_registered?: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -23,6 +25,29 @@ export interface CustomerFormData {
   address?: string;
   city?: string;
   country?: string;
+  trn_number?: string;
+  is_vat_registered?: boolean;
+}
+
+// Truck types
+export interface Truck {
+  id: number;
+  user_id: number;
+  plate_number: string;
+  truck_type: string;
+  status: 'available' | 'rented' | 'maintenance';
+  monthly_rate: number;
+  notes?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TruckFormData {
+  plate_number: string;
+  truck_type: string;
+  status: 'available' | 'rented' | 'maintenance';
+  monthly_rate: number;
+  notes?: string;
 }
 
 // Invoice types

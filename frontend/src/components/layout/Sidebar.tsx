@@ -13,6 +13,7 @@ export function Sidebar() {
     { path: '/invoices', label: 'Invoices', icon: '📄' },
     { path: '/customers', label: 'Clients', icon: '👥' },
     { path: '/products', label: 'Products', icon: '📦' },
+    { path: '/trucks', label: 'Trucks', icon: '🚛' },
     { path: '/payments', label: 'Payments', icon: '💰' },
     { path: '/reports', label: 'Reports', icon: '📈' },
     { path: '/settings', label: 'Settings', icon: '⚙️' },

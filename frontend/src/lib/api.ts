@@ -118,3 +118,32 @@ export const paymentsApi = {
       method: 'DELETE',
     }),
 };
+
+// Trucks API
+export const trucksApi = {
+  getAll: (status?: string) => {
+    const params = status ? `?status=${status}` : '';
+    return fetchApi(`/trucks${params}`);
+  },
+  
+  getOne: (id: number) => fetchApi(`/trucks/${id}`),
+  
+  getAvailable: () => fetchApi('/trucks/filter/available'),
+
+  create: (data: any) =>
+    fetchApi('/trucks', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  update: (id: number, data: any) =>
+    fetchApi(`/trucks/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+
+  delete: (id: number) =>
+    fetchApi(`/trucks/${id}`, {
+      method: 'DELETE',
+    }),
+};
