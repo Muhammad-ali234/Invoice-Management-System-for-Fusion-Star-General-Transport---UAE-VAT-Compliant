@@ -176,3 +176,40 @@ export const driversApi = {
       method: 'DELETE',
     }),
 };
+
+// Contracts API
+export const contractsApi = {
+  getAll: (status?: string, customer_id?: number) => {
+    const params = new URLSearchParams();
+    if (status) params.append('status', status);
+    if (customer_id) params.append('customer_id', customer_id.toString());
+    const queryString = params.toString();
+    return fetchApi(`/contracts${queryString ? `?${queryString}` : ''}`);
+  },
+  
+  getOne: (id: number) => fetchApi(`/contracts/${id}`),
+  
+  getExpiringSoon: () => fetchApi('/contracts/filter/expiring-soon'),
+
+  create: (data: any) =>
+    fetchApi('/contracts', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  update: (id: number, data: any) =>
+    fetchApi(`/contracts/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+
+  delete: (id: number) =>
+    fetchApi(`/contracts/${id}`, {
+      method: 'DELETE',
+    }),
+    
+  updateStatus: () =>
+    fetchApi('/contracts/update-status', {
+      method: 'POST',
+    }),
+};

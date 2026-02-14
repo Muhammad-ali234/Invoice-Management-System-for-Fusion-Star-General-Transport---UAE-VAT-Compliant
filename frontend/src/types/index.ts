@@ -73,6 +73,45 @@ export interface DriverFormData {
   notes?: string;
 }
 
+// Contract types
+export interface Contract {
+  id: number;
+  user_id: number;
+  contract_number: string;
+  customer_id: number;
+  customer_name?: string;
+  customer_email?: string;
+  customer_phone?: string;
+  customer_address?: string;
+  truck_id?: number;
+  truck_plate?: string;
+  truck_type?: string;
+  truck_status?: string;
+  driver_id?: number;
+  driver_name?: string;
+  driver_phone?: string;
+  driver_license?: string;
+  start_date: string;
+  end_date: string;
+  monthly_amount: number;
+  status: 'active' | 'expired' | 'cancelled';
+  billing_day: number;
+  notes?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ContractFormData {
+  customer_id: number;
+  truck_id?: number;
+  driver_id?: number;
+  start_date: string;
+  end_date: string;
+  monthly_amount: number;
+  billing_day: number;
+  notes?: string;
+}
+
 // Invoice types
 export interface LineItem {
   id?: number;
