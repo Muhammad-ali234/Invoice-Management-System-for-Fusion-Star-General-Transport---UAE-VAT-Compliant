@@ -228,3 +228,52 @@ export const billingApi = {
   getHistory: (limit = 50) =>
     fetchApi(`/billing/history?limit=${limit}`),
 };
+
+// Expenses API
+export const expensesApi = {
+  getAll: (filters?: { category?: string; truck_id?: number; driver_id?: number; start_date?: string; end_date?: string }) => {
+    const params = new URLSearchParams();
+    if (filters?.category) params.append('category', filters.category);
+    if (filters?.truck_id) params.append('truck_id', filters.truck_id.toString());
+    if (filters?.driver_id) params.append('driver_id', filters.driver_id.toString());
+    if (filters?.start_date) params.append('start_date', filters.start_date);
+    if (filters?.end_date) params.append('end_date', filters.end_date);
+    const queryString = params.toString();
+    return fetchApi(`/expenses${queryString ? `?${queryString}` : ''}`);
+  },
+  
+  getOne: (id: number) => fetchApi(`/expenses/${id}`),
+  
+  getSummaryByCategory: (start_date?: string, end_date?: string) => {
+    const params = new URLSearchParams();
+    if (start_date) params.append('start_date', start_date);
+    if (end_date) params.append('end_date', end_date);
+    const queryString = params.toString();
+    return fetchApi(`/expenses/summary/by-category${queryString ? `?${queryString}` : ''}`);
+  },
+  
+  getSummaryByTruck: (start_date?: string, end_date?: string) => {
+    const params = new URLSearchParams();
+    if (start_date) params.append('start_date', start_date);
+    if (end_date) params.append('end_date', end_date);
+    const queryString = params.toString();
+    return fetchApi(`/expenses/summary/by-truck${queryString ? `?${queryString}` : ''}`);
+  },
+
+  create: (data: any) =>
+    fetchApi('/expenses', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  update: (id: number, data: any) =>
+    fetchApi(`/expenses/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+
+  delete: (id: number) =>
+    fetchApi(`/expenses/${id}`, {
+      method: 'DELETE',
+    }),
+};

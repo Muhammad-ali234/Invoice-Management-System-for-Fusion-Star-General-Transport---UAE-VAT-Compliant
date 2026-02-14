@@ -20,6 +20,7 @@ import TrucksPage from './pages/TrucksPage';
 import DriversPage from './pages/DriversPage';
 import ContractsPage from './pages/ContractsPage';
 import BillingPage from './pages/BillingPage';
+import ExpensesPage from './pages/ExpensesPage';
 
 /**
  * ProtectedRoute component
@@ -110,6 +111,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <BillingPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/expenses"
+            element={
+              <ProtectedRoute>
+                <ExpensesPage />
               </ProtectedRoute>
             }
           />

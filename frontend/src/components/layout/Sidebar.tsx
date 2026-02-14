@@ -17,7 +17,8 @@ export function Sidebar() {
     { path: '/drivers', label: 'Drivers', icon: '👨‍✈️' },
     { path: '/contracts', label: 'Contracts', icon: '📝' },
     { path: '/billing', label: 'Billing', icon: '🔄' },
-    { path: '/payments', label: 'Payments', icon: '💰' },
+    { path: '/expenses', label: 'Expenses', icon: '💰' },
+    { path: '/payments', label: 'Payments', icon: '💵' },
     { path: '/reports', label: 'Reports', icon: '📈' },
     { path: '/settings', label: 'Settings', icon: '⚙️' },
   ];

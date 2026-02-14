@@ -73,6 +73,34 @@ export interface DriverFormData {
   notes?: string;
 }
 
+// Expense types
+export interface Expense {
+  id: number;
+  user_id: number;
+  expense_date: string;
+  category: 'fuel' | 'salik' | 'maintenance' | 'salary' | 'other';
+  truck_id?: number;
+  truck_plate?: string;
+  truck_type?: string;
+  driver_id?: number;
+  driver_name?: string;
+  amount: number;
+  description?: string;
+  receipt_number?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ExpenseFormData {
+  expense_date: string;
+  category: 'fuel' | 'salik' | 'maintenance' | 'salary' | 'other';
+  truck_id?: number;
+  driver_id?: number;
+  amount: number;
+  description?: string;
+  receipt_number?: string;
+}
+
 // Contract types
 export interface Contract {
   id: number;
