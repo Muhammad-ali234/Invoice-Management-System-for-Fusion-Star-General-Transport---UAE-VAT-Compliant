@@ -14,6 +14,7 @@ import productRoutes from './routes/products.js';
 import quoteRoutes from './routes/quotes.js';
 import settingsRoutes from './routes/settings.js';
 import truckRoutes from './routes/trucks.js';
+import driverRoutes from './routes/drivers.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import pool from './config/database.js';
 
@@ -77,6 +78,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/quotes', quoteRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/trucks', truckRoutes);
+app.use('/api/drivers', driverRoutes);
 
 // 404 handler
 app.use((req, res) => {

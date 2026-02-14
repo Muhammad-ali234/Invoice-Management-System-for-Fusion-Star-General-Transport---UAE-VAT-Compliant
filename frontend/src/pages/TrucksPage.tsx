@@ -152,7 +152,7 @@ export default function TrucksPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {truck.monthly_rate.toFixed(2)} AED
+                    {Number(truck.monthly_rate).toFixed(2)} AED
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-600">
                     {truck.notes ? (

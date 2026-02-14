@@ -50,6 +50,29 @@ export interface TruckFormData {
   notes?: string;
 }
 
+// Driver types
+export interface Driver {
+  id: number;
+  user_id: number;
+  full_name: string;
+  phone: string;
+  license_number: string;
+  license_expiry: string;
+  status: 'available' | 'assigned' | 'on_leave';
+  notes?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DriverFormData {
+  full_name: string;
+  phone: string;
+  license_number: string;
+  license_expiry: string;
+  status: 'available' | 'assigned' | 'on_leave';
+  notes?: string;
+}
+
 // Invoice types
 export interface LineItem {
   id?: number;

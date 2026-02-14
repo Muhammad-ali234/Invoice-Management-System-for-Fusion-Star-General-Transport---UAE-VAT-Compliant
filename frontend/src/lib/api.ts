@@ -147,3 +147,32 @@ export const trucksApi = {
       method: 'DELETE',
     }),
 };
+
+// Drivers API
+export const driversApi = {
+  getAll: (status?: string) => {
+    const params = status ? `?status=${status}` : '';
+    return fetchApi(`/drivers${params}`);
+  },
+  
+  getOne: (id: number) => fetchApi(`/drivers/${id}`),
+  
+  getAvailable: () => fetchApi('/drivers/filter/available'),
+
+  create: (data: any) =>
+    fetchApi('/drivers', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  update: (id: number, data: any) =>
+    fetchApi(`/drivers/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+
+  delete: (id: number) =>
+    fetchApi(`/drivers/${id}`, {
+      method: 'DELETE',
+    }),
+};

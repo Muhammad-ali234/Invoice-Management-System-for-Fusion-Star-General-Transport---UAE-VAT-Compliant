@@ -14,6 +14,7 @@ export function Sidebar() {
     { path: '/customers', label: 'Clients', icon: '👥' },
     { path: '/products', label: 'Products', icon: '📦' },
     { path: '/trucks', label: 'Trucks', icon: '🚛' },
+    { path: '/drivers', label: 'Drivers', icon: '👨‍✈️' },
     { path: '/payments', label: 'Payments', icon: '💰' },
     { path: '/reports', label: 'Reports', icon: '📈' },
     { path: '/settings', label: 'Settings', icon: '⚙️' },
