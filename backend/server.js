@@ -16,8 +16,10 @@ import settingsRoutes from './routes/settings.js';
 import truckRoutes from './routes/trucks.js';
 import driverRoutes from './routes/drivers.js';
 import contractRoutes from './routes/contracts.js';
+import billingRoutes from './routes/billing.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import pool from './config/database.js';
+import { startRecurringBillingCron } from './jobs/recurringBillingCron.js';
 
 dotenv.config();
 
@@ -81,6 +83,7 @@ app.use('/api/settings', settingsRoutes);
 app.use('/api/trucks', truckRoutes);
 app.use('/api/drivers', driverRoutes);
 app.use('/api/contracts', contractRoutes);
+app.use('/api/billing', billingRoutes);
 
 // 404 handler
 app.use((req, res) => {
@@ -119,6 +122,11 @@ app.listen(PORT, () => {
 ║                                                       ║
 ╚═══════════════════════════════════════════════════════╝
   `);
+  
+  // Start recurring billing cron job
+  console.log('\n🔄 Initializing recurring billing system...');
+  startRecurringBillingCron();
+  console.log('');
 });
 
 export default app;
