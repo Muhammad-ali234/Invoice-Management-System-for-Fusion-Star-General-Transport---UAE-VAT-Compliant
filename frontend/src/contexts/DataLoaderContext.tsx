@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { customersApi, invoicesApi, trucksApi, driversApi, contractsApi, paymentsApi } from '@/lib/api';
+import { useAuth } from './AuthContext';
 
 interface CachedData {
   customers: any[];
@@ -21,6 +22,8 @@ interface DataLoaderContextType {
 const DataLoaderContext = createContext<DataLoaderContextType | undefined>(undefined);
 
 export function DataLoaderProvider({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth(); // Get auth state
+  
   const [data, setData] = useState<CachedData>({
     customers: [],
     invoices: [],
@@ -30,11 +33,25 @@ export function DataLoaderProvider({ children }: { children: React.ReactNode }) 
     payments: [],
   });
   
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Fetch all data
   const fetchAllData = useCallback(async () => {
+    // Only fetch if user is authenticated
+    if (!user) {
+      setData({
+        customers: [],
+        invoices: [],
+        trucks: [],
+        drivers: [],
+        contracts: [],
+        payments: [],
+      });
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
@@ -62,10 +79,13 @@ export function DataLoaderProvider({ children }: { children: React.ReactNode }) 
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [user]);
 
   // Fetch specific data type
   const fetchData = useCallback(async (key: keyof CachedData) => {
+    // Only fetch if user is authenticated
+    if (!user) return;
+    
     try {
       let result;
       switch (key) {
@@ -95,7 +115,7 @@ export function DataLoaderProvider({ children }: { children: React.ReactNode }) 
     } catch (err) {
       console.error(`Failed to fetch ${key}:`, err);
     }
-  }, []);
+  }, [user]);
 
   // Refetch data
   const refetch = useCallback(async (key?: keyof CachedData) => {
@@ -112,10 +132,12 @@ export function DataLoaderProvider({ children }: { children: React.ReactNode }) 
     fetchData(key);
   }, [fetchData]);
 
-  // Initial load
+  // Initial load - only when user is authenticated
   useEffect(() => {
-    fetchAllData();
-  }, [fetchAllData]);
+    if (user) {
+      fetchAllData();
+    }
+  }, [user, fetchAllData]);
 
   return (
     <DataLoaderContext.Provider value={{ data, loading, error, refetch, invalidate }}>
