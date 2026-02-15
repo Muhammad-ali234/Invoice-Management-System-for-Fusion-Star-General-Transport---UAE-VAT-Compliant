@@ -4,11 +4,6 @@ import { LoginPage } from './pages/auth/LoginPage';
 import { RegisterPage } from './pages/auth/RegisterPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { CustomersPage } from './pages/CustomersPage';
-import { ProductsPage } from './pages/ProductsPage';
-import { QuotesPage } from './pages/QuotesPage';
-import { QuoteCreatePage } from './pages/QuoteCreatePage';
-import { QuoteEditPage } from './pages/QuoteEditPage';
-import { QuoteDetailPage } from './pages/QuoteDetailPage';
 import { InvoicesPage } from './pages/InvoicesPage';
 import { InvoiceDetailPage } from './pages/InvoiceDetailPage';
 import { InvoiceCreatePage } from './pages/InvoiceCreatePage';
@@ -75,82 +70,10 @@ function App() {
             }
           />
           <Route
-            path="/products"
-            element={
-              <ProtectedRoute>
-                <ProductsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
             path="/trucks"
             element={
               <ProtectedRoute>
                 <TrucksPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/drivers"
-            element={
-              <ProtectedRoute>
-                <DriversPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/contracts"
-            element={
-              <ProtectedRoute>
-                <ContractsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/billing"
-            element={
-              <ProtectedRoute>
-                <BillingPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/expenses"
-            element={
-              <ProtectedRoute>
-                <ExpensesPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/quotes"
-            element={
-              <ProtectedRoute>
-                <QuotesPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/quotes/new"
-            element={
-              <ProtectedRoute>
-                <QuoteCreatePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/quotes/:id"
-            element={
-              <ProtectedRoute>
-                <QuoteDetailPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/quotes/:id/edit"
-            element={
-              <ProtectedRoute>
-                <QuoteEditPage />
               </ProtectedRoute>
             }
           />

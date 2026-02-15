@@ -9,10 +9,8 @@ export function Sidebar() {
 
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: '📊' },
-    { path: '/quotes', label: 'Quotes', icon: '📋' },
     { path: '/invoices', label: 'Invoices', icon: '📄' },
     { path: '/customers', label: 'Clients', icon: '👥' },
-    { path: '/products', label: 'Products', icon: '📦' },
     { path: '/trucks', label: 'Trucks', icon: '🚛' },
     { path: '/drivers', label: 'Drivers', icon: '👨‍✈️' },
     { path: '/contracts', label: 'Contracts', icon: '📝' },

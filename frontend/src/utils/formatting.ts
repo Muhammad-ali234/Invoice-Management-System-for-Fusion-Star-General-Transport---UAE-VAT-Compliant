@@ -37,7 +37,7 @@ export function formatDateForInput(date: Date | string): string {
 }
 
 /**
- * Get status badge color based on invoice/quote status
+ * Get status badge color based on invoice status
  */
 export function getStatusColor(status: string): string {
   switch (status) {
@@ -51,15 +51,6 @@ export function getStatusColor(status: string): string {
       return 'bg-green-200 text-green-800';
     case 'overdue':
       return 'bg-red-200 text-red-800';
-    // Quote statuses
-    case 'approved':
-      return 'bg-green-200 text-green-800';
-    case 'rejected':
-      return 'bg-red-200 text-red-800';
-    case 'expired':
-      return 'bg-gray-200 text-gray-800';
-    case 'converted':
-      return 'bg-purple-200 text-purple-800';
     default:
       return 'bg-gray-200 text-gray-800';
   }
@@ -80,15 +71,6 @@ export function getStatusLabel(status: string): string {
       return 'Paid';
     case 'overdue':
       return 'Overdue';
-    // Quote statuses
-    case 'approved':
-      return 'Approved';
-    case 'rejected':
-      return 'Rejected';
-    case 'expired':
-      return 'Expired';
-    case 'converted':
-      return 'Converted';
     default:
       return status;
   }

@@ -143,7 +143,6 @@ export interface ContractFormData {
 // Invoice types
 export interface LineItem {
   id?: number;
-  productId?: number;
   description: string;
   quantity: number;
   rate: number;
@@ -252,47 +251,3 @@ export interface RegisterFormData {
   password: string;
   confirmPassword: string;
 }
-
-// Product types
-export * from './product';
-
-// Quote types
-export type QuoteStatus = 'draft' | 'sent' | 'approved' | 'rejected' | 'expired' | 'converted';
-
-export interface Quote {
-  id: number;
-  user_id: number;
-  quote_number: string;
-  customer_id: number;
-  customer_name: string;
-  quote_date: string;
-  expiry_date: string;
-  lineItems?: LineItem[];
-  subtotal: number;
-  discount_percent: number;
-  discount_amount: number;
-  tax_percent: number;
-  tax_amount: number;
-  grand_total: number;
-  status: QuoteStatus;
-  notes?: string;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface QuoteFormData {
-  customerId: number;
-  customerName: string;
-  quoteDate: string;
-  expiryDate: string;
-  lineItems: LineItem[];
-  subtotal: number;
-  discountPercent: number;
-  discountAmount: number;
-  taxPercent: number;
-  taxAmount: number;
-  grandTotal: number;
-  status: QuoteStatus;
-  notes?: string;
-}
-
