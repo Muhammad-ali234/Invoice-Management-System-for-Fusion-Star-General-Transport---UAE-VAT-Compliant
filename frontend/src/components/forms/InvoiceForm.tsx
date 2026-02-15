@@ -25,9 +25,11 @@ interface InvoiceFormProps {
  * - Collapsible sections
  * - Sticky summary bar
  * - Better button hierarchy
+ * - Currency selector (AED/USD)
  */
 export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: InvoiceFormProps) {
   const [submitting, setSubmitting] = useState(false);
+  const [currency, setCurrency] = useState<'AED' | 'USD'>('AED');
   const [sectionsCollapsed, setSectionsCollapsed] = useState({
     details: false,
     items: false,
@@ -128,6 +130,14 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
     setSectionsCollapsed(prev => ({ ...prev, [section]: !prev[section] }));
   };
 
+  // Format currency based on selected currency
+  const formatCurrencyWithSymbol = (amount: number) => {
+    if (currency === 'USD') {
+      return `$${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
+    return formatCurrency(amount); // AED (Rs format)
+  };
+
   const customerOptions = [
     { value: '', label: 'Select Customer / Customer Chunein' },
     ...customers.map((c) => ({ value: c.id.toString(), label: c.name })),
@@ -165,6 +175,22 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
                 {...register('customerId')}
               />
 
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Currency / Currency
+                </label>
+                <select
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                  value={currency}
+                  onChange={(e) => setCurrency(e.target.value as 'AED' | 'USD')}
+                >
+                  <option value="AED">AED (Dirham) - د.إ</option>
+                  <option value="USD">USD (Dollar) - $</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input
                 label="Invoice Date / Tarikh"
                 type="date"
@@ -172,9 +198,7 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
                 error={errors.invoiceDate?.message}
                 {...register('invoiceDate')}
               />
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Payment Terms
@@ -193,7 +217,9 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
                   ))}
                 </select>
               </div>
+            </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input
                 label="Due Date / Akhri Tarikh"
                 type="date"
@@ -264,7 +290,7 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
                         />
                       </td>
                       <td className="py-3 px-3 text-right font-semibold text-gray-900">
-                        {formatCurrency(
+                        {formatCurrencyWithSymbol(
                           calculateLineAmount(
                             lineItems[index]?.quantity || 0,
                             lineItems[index]?.rate || 0
@@ -317,7 +343,7 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
             {/* Subtotal */}
             <div className="flex justify-between items-center py-2">
               <span className="text-gray-700">Subtotal:</span>
-              <span className="text-lg font-semibold">{formatCurrency(calculatedTotals.subtotal)}</span>
+              <span className="text-lg font-semibold">{formatCurrencyWithSymbol(calculatedTotals.subtotal)}</span>
             </div>
 
             {/* Discount */}
@@ -336,7 +362,7 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
               <div className="flex-1 text-right">
                 <span className="text-sm text-gray-600">Discount Amount</span>
                 <p className="text-lg font-semibold text-red-600">
-                  - {formatCurrency(calculatedTotals.discountAmount)}
+                  - {formatCurrencyWithSymbol(calculatedTotals.discountAmount)}
                 </p>
               </div>
             </div>
@@ -357,7 +383,7 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
               <div className="flex-1 text-right">
                 <span className="text-sm text-gray-600">Tax Amount</span>
                 <p className="text-lg font-semibold text-green-600">
-                  + {formatCurrency(calculatedTotals.taxAmount)}
+                  + {formatCurrencyWithSymbol(calculatedTotals.taxAmount)}
                 </p>
               </div>
             </div>
@@ -366,7 +392,7 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
             <div className="flex justify-between items-center py-4 border-t-2 border-gray-300 bg-gradient-to-r from-blue-50 to-transparent px-4 rounded-lg">
               <span className="text-xl font-bold text-gray-900">💰 Grand Total:</span>
               <span className="text-3xl font-bold text-blue-600 animate-pulse">
-                {formatCurrency(calculatedTotals.grandTotal)}
+                {formatCurrencyWithSymbol(calculatedTotals.grandTotal)}
               </span>
             </div>
           </div>
@@ -398,31 +424,31 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
 
       {/* Sticky Summary Bar */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-gray-200 shadow-lg z-50">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="max-w-7xl mx-auto px-4 py-3">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-3">
             {/* Summary */}
-            <div className="flex items-center gap-6 text-sm">
-              <div>
+            <div className="flex flex-wrap items-center gap-4 text-sm">
+              <div className="whitespace-nowrap">
                 <span className="text-gray-600">Subtotal: </span>
-                <span className="font-semibold">{formatCurrency(calculatedTotals.subtotal)}</span>
+                <span className="font-semibold">{formatCurrencyWithSymbol(calculatedTotals.subtotal)}</span>
               </div>
               <div className="hidden md:block text-gray-300">|</div>
-              <div>
+              <div className="whitespace-nowrap">
                 <span className="text-gray-600">Grand Total: </span>
-                <span className="text-xl font-bold text-blue-600">
-                  {formatCurrency(calculatedTotals.grandTotal)}
+                <span className="text-lg md:text-xl font-bold text-blue-600">
+                  {formatCurrencyWithSymbol(calculatedTotals.grandTotal)}
                 </span>
               </div>
             </div>
 
             {/* Action Buttons - Improved Hierarchy */}
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-2 justify-center">
               <Button 
                 type="button" 
                 variant="secondary" 
                 onClick={onCancel} 
                 disabled={submitting}
-                className="border-2 border-gray-300"
+                className="border-2 border-gray-300 text-sm px-4 py-2"
               >
                 Cancel
               </Button>
@@ -431,7 +457,7 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
                 variant="secondary"
                 onClick={handleSubmit((data) => handleFormSubmit(data as InvoiceFormData, 'draft'))}
                 loading={submitting}
-                className="bg-gray-100 hover:bg-gray-200"
+                className="bg-gray-100 hover:bg-gray-200 text-sm px-4 py-2"
               >
                 Save Draft
               </Button>
@@ -439,7 +465,7 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
                 type="button"
                 onClick={handleSubmit((data) => handleFormSubmit(data as InvoiceFormData, 'sent'))}
                 loading={submitting}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg font-semibold shadow-lg"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 text-base font-semibold shadow-lg"
               >
                 Save & Send ✓
               </Button>
