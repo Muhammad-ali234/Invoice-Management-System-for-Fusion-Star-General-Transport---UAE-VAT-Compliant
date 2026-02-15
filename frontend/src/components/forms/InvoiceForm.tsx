@@ -46,7 +46,7 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
       subtotal: 0,
       discountPercent: 0,
       discountAmount: 0,
-      taxPercent: 0,
+      taxPercent: 5, // UAE VAT rate
       taxAmount: 0,
       grandTotal: 0,
       status: 'draft',

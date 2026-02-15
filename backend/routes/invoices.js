@@ -140,16 +140,14 @@ router.post('/', invoiceValidation, validate, async (req, res, next) => {
       for (const item of lineItems) {
         await client.query(
           `INSERT INTO invoice_items 
-           (invoice_id, product_id, description, quantity, rate, amount, tax_percent)
-           VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+           (invoice_id, description, quantity, rate, amount)
+           VALUES ($1, $2, $3, $4, $5)`,
           [
             invoice.id,
-            item.productId || null,
             item.description,
             item.quantity,
             item.rate,
-            item.amount,
-            item.taxPercent || 0
+            item.amount
           ]
         );
       }
@@ -221,16 +219,14 @@ router.put('/:id', invoiceValidation, validate, async (req, res, next) => {
       for (const item of lineItems) {
         await client.query(
           `INSERT INTO invoice_items 
-           (invoice_id, product_id, description, quantity, rate, amount, tax_percent)
-           VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+           (invoice_id, description, quantity, rate, amount)
+           VALUES ($1, $2, $3, $4, $5)`,
           [
             id,
-            item.productId || null,
             item.description,
             item.quantity,
             item.rate,
-            item.amount,
-            item.taxPercent || 0
+            item.amount
           ]
         );
       }
