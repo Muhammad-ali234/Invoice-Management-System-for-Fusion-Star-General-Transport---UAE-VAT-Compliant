@@ -1,8 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { useContracts } from '@/hooks/useContracts';
-import { useCustomers } from '@/hooks/useCustomers';
-import { useTrucks } from '@/hooks/useTrucks';
-import { useDrivers } from '@/hooks/useDrivers';
+import { useCachedCustomers, useCachedTrucks, useCachedDrivers } from '@/contexts/DataLoaderContext';
 import { Button } from '@/components/common/Button';
 import { Input } from '@/components/common/Input';
 import { Select } from '@/components/common/Select';
@@ -16,9 +14,13 @@ interface ContractFormProps {
 
 export default function ContractForm({ contract, onSuccess, onCancel }: ContractFormProps) {
   const { createContract, updateContract } = useContracts();
-  const { customers } = useCustomers();
-  const { data: trucks } = useTrucks('available');
-  const { data: drivers } = useDrivers('available');
+  const { customers } = useCachedCustomers();
+  const { trucks } = useCachedTrucks();
+  const { drivers } = useCachedDrivers();
+  
+  // Filter available trucks and drivers
+  const availableTrucks = trucks.filter(t => t.status === 'available' || t.id === contract?.truck_id);
+  const availableDrivers = drivers.filter(d => d.status === 'available' || d.id === contract?.driver_id);
 
   const {
     register,
@@ -84,7 +86,7 @@ export default function ContractForm({ contract, onSuccess, onCancel }: Contract
   // Prepare truck options (include current truck if editing)
   const truckOptions = [
     { value: '', label: 'No truck assigned' },
-    ...(trucks?.map((t) => ({
+    ...(availableTrucks?.map((t) => ({
       value: t.id.toString(),
       label: `${t.plate_number} - ${t.truck_type}`,
     })) || []),
@@ -101,7 +103,7 @@ export default function ContractForm({ contract, onSuccess, onCancel }: Contract
   // Prepare driver options (include current driver if editing)
   const driverOptions = [
     { value: '', label: 'No driver assigned' },
-    ...(drivers?.map((d) => ({
+    ...(availableDrivers?.map((d) => ({
       value: d.id.toString(),
       label: `${d.full_name} - ${d.phone}`,
     })) || []),

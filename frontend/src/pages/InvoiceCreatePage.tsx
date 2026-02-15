@@ -1,13 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { InvoiceForm } from '@/components/forms/InvoiceForm';
-import { useCustomers } from '@/hooks/useCustomers';
+import { useCachedCustomers } from '@/contexts/DataLoaderContext';
 import { useInvoices } from '@/hooks/useInvoices';
 import { Loading } from '@/components/common/Loading';
 import { InvoiceFormData } from '@/types';
 
 export function InvoiceCreatePage() {
-  const { customers, loading } = useCustomers();
+  const { customers, loading } = useCachedCustomers();
   const { createInvoice } = useInvoices();
   const navigate = useNavigate();
 

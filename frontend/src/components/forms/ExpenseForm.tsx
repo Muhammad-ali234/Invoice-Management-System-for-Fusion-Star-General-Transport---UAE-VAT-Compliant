@@ -1,7 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { useExpenses } from '@/hooks/useExpenses';
-import { useTrucks } from '@/hooks/useTrucks';
-import { useDrivers } from '@/hooks/useDrivers';
+import { useCachedTrucks, useCachedDrivers } from '@/contexts/DataLoaderContext';
 import { Button } from '@/components/common/Button';
 import { Input } from '@/components/common/Input';
 import { Select } from '@/components/common/Select';
@@ -23,8 +22,8 @@ const categoryOptions = [
 
 export default function ExpenseForm({ expense, onSuccess, onCancel }: ExpenseFormProps) {
   const { createExpense, updateExpense } = useExpenses();
-  const { data: trucks } = useTrucks();
-  const { data: drivers } = useDrivers();
+  const { trucks } = useCachedTrucks();
+  const { drivers } = useCachedDrivers();
 
   const {
     register,
