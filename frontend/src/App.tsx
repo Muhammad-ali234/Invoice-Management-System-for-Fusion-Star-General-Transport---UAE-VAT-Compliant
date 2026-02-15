@@ -78,6 +78,38 @@ function App() {
             }
           />
           <Route
+            path="/drivers"
+            element={
+              <ProtectedRoute>
+                <DriversPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/contracts"
+            element={
+              <ProtectedRoute>
+                <ContractsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/billing"
+            element={
+              <ProtectedRoute>
+                <BillingPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/expenses"
+            element={
+              <ProtectedRoute>
+                <ExpensesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/invoices"
             element={
               <ProtectedRoute>
