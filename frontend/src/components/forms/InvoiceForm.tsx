@@ -101,7 +101,13 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
 
     const totals = calculateInvoiceTotals(updatedLineItems, discountPercent, taxPercent);
     setCalculatedTotals(totals);
-  }, [lineItems, discountPercent, taxPercent]);
+    
+    // Update form values
+    setValue('subtotal', totals.subtotal);
+    setValue('discountAmount', totals.discountAmount);
+    setValue('taxAmount', totals.taxAmount);
+    setValue('grandTotal', totals.grandTotal);
+  }, [lineItems, discountPercent, taxPercent, setValue]);
 
   const handleFormSubmit = async (data: InvoiceFormData, status: 'draft' | 'sent') => {
     try {
@@ -188,14 +194,6 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
     }
   };
 
-  const paymentTermsOptions = [
-    { value: '0', label: 'Due on Receipt' },
-    { value: '7', label: 'Net 7 Days' },
-    { value: '15', label: 'Net 15 Days' },
-    { value: '30', label: 'Net 30 Days' },
-    { value: 'custom', label: 'Custom' },
-  ];
-
   return (
     <div className="space-y-4 pb-24">
       {/* Invoice Details Section */}
@@ -233,23 +231,29 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
                 {errors.customerId && (
                   <p className="text-xs text-red-600 mt-1">{errors.customerId.message}</p>
                 )}
-                <p className="text-xs text-gray-500 mt-1">
-                  💡 Select from list or type new customer name
-                </p>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Currency / Currency
                 </label>
-                <select
+                <input
+                  type="text"
+                  list="currency-list"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                  placeholder="Select or type currency"
                   value={currency}
-                  onChange={(e) => setCurrency(e.target.value as 'AED' | 'USD')}
-                >
+                  onChange={(e) => {
+                    const val = e.target.value.toUpperCase();
+                    if (val === 'AED' || val === 'USD' || val.length <= 3) {
+                      setCurrency(val as 'AED' | 'USD');
+                    }
+                  }}
+                />
+                <datalist id="currency-list">
                   <option value="AED">AED (Dirham) - د.إ</option>
                   <option value="USD">USD (Dollar) - $</option>
-                </select>
+                </datalist>
               </div>
             </div>
 
@@ -266,19 +270,33 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Payment Terms
                 </label>
-                <select
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                <input
+                  type="text"
+                  list="payment-terms-list"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                  placeholder="Select terms or type custom"
                   onChange={(e) => {
                     const value = e.target.value;
-                    if (value !== 'custom') {
-                      handlePaymentTerms(parseInt(value));
+                    // Check if it's a predefined option
+                    if (value === 'Due on Receipt') {
+                      handlePaymentTerms(0);
+                    } else if (value === 'Net 7 Days') {
+                      handlePaymentTerms(7);
+                    } else if (value === 'Net 15 Days') {
+                      handlePaymentTerms(15);
+                    } else if (value === 'Net 30 Days') {
+                      handlePaymentTerms(30);
                     }
+                    // Otherwise, user can type custom and manually set due date
                   }}
-                >
-                  {paymentTermsOptions.map(opt => (
-                    <option key={opt.value} value={opt.value}>{opt.label}</option>
-                  ))}
-                </select>
+                />
+                <datalist id="payment-terms-list">
+                  <option value="Due on Receipt" />
+                  <option value="Net 7 Days" />
+                  <option value="Net 15 Days" />
+                  <option value="Net 30 Days" />
+                  <option value="Custom" />
+                </datalist>
               </div>
             </div>
 
@@ -355,9 +373,6 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
                   Add
                 </Button>
               </div>
-              <p className="text-xs text-gray-600 mt-2">
-                💡 Select from list or type custom description, then click Add or press Enter
-              </p>
             </div>
 
             <div className="overflow-x-auto">
