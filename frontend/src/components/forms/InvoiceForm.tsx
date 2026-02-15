@@ -151,8 +151,10 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
 
   // Add vehicle to line items (from dropdown or manual input)
   const addVehicleToLineItems = (input: string) => {
-    // Check if it's a vehicle ID from dropdown
-    const vehicle = trucks.find(t => t.id.toString() === input);
+    // Check if it matches a vehicle from the list (format: "Type - Plate")
+    const vehicle = trucks.find(t => 
+      input.includes(t.truck_type) && input.includes(t.plate_number)
+    );
     if (vehicle) {
       append({
         description: `Monthly Rental - ${vehicle.truck_type} (${vehicle.plate_number})`,
@@ -174,7 +176,8 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
   // Handle customer selection or manual input
   const handleCustomerChange = (value: string) => {
     setCustomerInput(value);
-    const customer = customers.find(c => c.id.toString() === value || c.name === value);
+    // Find customer by name (since datalist now uses name as value)
+    const customer = customers.find(c => c.name === value);
     if (customer) {
       setValue('customerId', customer.id);
       setValue('customerName', customer.name);
@@ -224,9 +227,7 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
                 />
                 <datalist id="customers-list">
                   {customers.map((c) => (
-                    <option key={c.id} value={c.id.toString()}>
-                      {c.name}
-                    </option>
+                    <option key={c.id} value={c.name} data-id={c.id.toString()} />
                   ))}
                 </datalist>
                 {errors.customerId && (
@@ -331,9 +332,12 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
                   />
                   <datalist id="vehicles-list">
                     {trucks.map(t => (
-                      <option key={t.id} value={t.id.toString()}>
-                        {t.truck_type} - {t.plate_number} ({formatCurrencyWithSymbol(t.monthly_rate)}/month)
-                      </option>
+                      <option 
+                        key={t.id} 
+                        value={`${t.truck_type} - ${t.plate_number}`}
+                        data-id={t.id.toString()}
+                        data-rate={t.monthly_rate}
+                      />
                     ))}
                   </datalist>
                 </div>
