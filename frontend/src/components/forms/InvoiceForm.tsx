@@ -9,6 +9,7 @@ import { Button } from '@/components/common/Button';
 import { formatDateForInput, formatCurrency } from '@/utils/formatting';
 import { calculateLineAmount, calculateInvoiceTotals } from '@/utils/calculations';
 import { Trash2, Plus, ChevronDown, ChevronUp } from 'lucide-react';
+import { useCachedTrucks } from '@/contexts/DataLoaderContext';
 
 interface InvoiceFormProps {
   customers: Customer[];
@@ -36,6 +37,8 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
     calculations: false,
     notes: true, // Collapsed by default
   });
+  
+  const { trucks } = useCachedTrucks(); // Get vehicles for selection
   
   const [calculatedTotals, setCalculatedTotals] = useState({
     subtotal: 0,
@@ -138,6 +141,19 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
     return formatCurrency(amount); // AED (Rs format)
   };
 
+  // Add vehicle to line items
+  const addVehicleToLineItems = (vehicleId: string) => {
+    const vehicle = trucks.find(t => t.id.toString() === vehicleId);
+    if (vehicle) {
+      append({
+        description: `Monthly Rental - ${vehicle.truck_type} (${vehicle.plate_number})`,
+        quantity: 1,
+        rate: vehicle.monthly_rate || 0,
+        amount: vehicle.monthly_rate || 0,
+      });
+    }
+  };
+
   const customerOptions = [
     { value: '', label: 'Select Customer / Customer Chunein' },
     ...customers.map((c) => ({ value: c.id.toString(), label: c.name })),
@@ -149,6 +165,14 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
     { value: '15', label: 'Net 15 Days' },
     { value: '30', label: 'Net 30 Days' },
     { value: 'custom', label: 'Custom' },
+  ];
+
+  const vehicleOptions = [
+    { value: '', label: 'Select Vehicle (Optional)' },
+    ...trucks.map(t => ({
+      value: t.id.toString(),
+      label: `${t.truck_type} - ${t.plate_number} (${formatCurrencyWithSymbol(t.monthly_rate)}/month)`
+    }))
   ];
 
   return (
@@ -245,6 +269,31 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
         
         {!sectionsCollapsed.items && (
           <div className="px-6 pb-6">
+            {/* Quick Add Vehicle */}
+            <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Quick Add Vehicle / Vehicle Jaldi Add Karein
+              </label>
+              <div className="flex gap-2">
+                <select
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      addVehicleToLineItems(e.target.value);
+                      e.target.value = ''; // Reset selection
+                    }
+                  }}
+                >
+                  {vehicleOptions.map(opt => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+                <span className="text-sm text-gray-600 self-center whitespace-nowrap">
+                  or add manually below
+                </span>
+              </div>
+            </div>
+
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead>

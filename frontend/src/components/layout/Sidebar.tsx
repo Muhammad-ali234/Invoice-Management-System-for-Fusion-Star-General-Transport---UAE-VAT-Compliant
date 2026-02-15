@@ -17,8 +17,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: '📊' },
     { path: '/invoices', label: 'Invoices', icon: '📄' },
-    { path: '/customers', label: 'Clients', icon: '👥' },
-    { path: '/trucks', label: 'Trucks', icon: '🚛' },
+    { path: '/customers', label: 'Customers', icon: '👥' },
+    { path: '/trucks', label: 'Vehicles', icon: '🚛' },
     { path: '/drivers', label: 'Drivers', icon: '👨‍✈️' },
     { path: '/contracts', label: 'Contracts', icon: '📝' },
     { path: '/billing', label: 'Billing', icon: '🔄' },
