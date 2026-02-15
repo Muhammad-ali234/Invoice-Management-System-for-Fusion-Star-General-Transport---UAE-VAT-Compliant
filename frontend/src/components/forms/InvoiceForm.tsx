@@ -349,14 +349,17 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
                     }}
                   />
                   <datalist id="vehicles-list">
-                    {trucks.map(t => (
-                      <option 
-                        key={t.id} 
-                        value={`${t.truck_type} - ${t.plate_number}`}
-                        data-id={t.id.toString()}
-                        data-rate={t.monthly_rate}
-                      />
-                    ))}
+                    {trucks.map(t => {
+                      const statusEmoji = t.status === 'available' ? '✅' : t.status === 'rented' ? '🔵' : '⚠️';
+                      const statusText = t.status === 'available' ? 'Available' : t.status === 'rented' ? 'Rented' : 'Maintenance';
+                      return (
+                        <option 
+                          key={t.id} 
+                          value={`${t.truck_type} - ${t.plate_number}`}
+                          label={`${statusEmoji} ${t.truck_type} - ${t.plate_number} [${statusText}] - ${formatCurrencyWithSymbol(t.monthly_rate)}/month`}
+                        />
+                      );
+                    })}
                   </datalist>
                 </div>
                 <Button
