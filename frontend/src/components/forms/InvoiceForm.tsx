@@ -4,7 +4,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { invoiceSchema } from '@/utils/validation';
 import { InvoiceFormData, Customer } from '@/types';
 import { Input } from '@/components/common/Input';
-import { Select } from '@/components/common/Select';
 import { Button } from '@/components/common/Button';
 import { formatDateForInput, formatCurrency } from '@/utils/formatting';
 import { calculateLineAmount, calculateInvoiceTotals } from '@/utils/calculations';
@@ -39,6 +38,8 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
   });
   
   const { trucks } = useCachedTrucks(); // Get vehicles for selection
+  const [customerInput, setCustomerInput] = useState('');
+  const [vehicleInput, setVehicleInput] = useState('');
   
   const [calculatedTotals, setCalculatedTotals] = useState({
     subtotal: 0,
@@ -72,6 +73,13 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
       notes: '',
     },
   });
+
+  // Initialize customer input with existing data
+  useEffect(() => {
+    if (initialData?.customerName) {
+      setCustomerInput(initialData.customerName);
+    }
+  }, [initialData]);
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -141,9 +149,10 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
     return formatCurrency(amount); // AED (Rs format)
   };
 
-  // Add vehicle to line items
-  const addVehicleToLineItems = (vehicleId: string) => {
-    const vehicle = trucks.find(t => t.id.toString() === vehicleId);
+  // Add vehicle to line items (from dropdown or manual input)
+  const addVehicleToLineItems = (input: string) => {
+    // Check if it's a vehicle ID from dropdown
+    const vehicle = trucks.find(t => t.id.toString() === input);
     if (vehicle) {
       append({
         description: `Monthly Rental - ${vehicle.truck_type} (${vehicle.plate_number})`,
@@ -151,13 +160,30 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
         rate: vehicle.monthly_rate || 0,
         amount: vehicle.monthly_rate || 0,
       });
+    } else if (input.trim()) {
+      // Manual input - add as custom description
+      append({
+        description: input.trim(),
+        quantity: 1,
+        rate: 0,
+        amount: 0,
+      });
     }
   };
 
-  const customerOptions = [
-    { value: '', label: 'Select Customer / Customer Chunein' },
-    ...customers.map((c) => ({ value: c.id.toString(), label: c.name })),
-  ];
+  // Handle customer selection or manual input
+  const handleCustomerChange = (value: string) => {
+    setCustomerInput(value);
+    const customer = customers.find(c => c.id.toString() === value || c.name === value);
+    if (customer) {
+      setValue('customerId', customer.id);
+      setValue('customerName', customer.name);
+    } else {
+      // Manual input - set customerId to 0 and use the typed name
+      setValue('customerId', 0);
+      setValue('customerName', value);
+    }
+  };
 
   const paymentTermsOptions = [
     { value: '0', label: 'Due on Receipt' },
@@ -165,14 +191,6 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
     { value: '15', label: 'Net 15 Days' },
     { value: '30', label: 'Net 30 Days' },
     { value: 'custom', label: 'Custom' },
-  ];
-
-  const vehicleOptions = [
-    { value: '', label: 'Select Vehicle (Optional)' },
-    ...trucks.map(t => ({
-      value: t.id.toString(),
-      label: `${t.truck_type} - ${t.plate_number} (${formatCurrencyWithSymbol(t.monthly_rate)}/month)`
-    }))
   ];
 
   return (
@@ -191,13 +209,33 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
         {!sectionsCollapsed.details && (
           <div className="px-6 pb-6 space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Select
-                label="Customer / Customer"
-                options={customerOptions}
-                required
-                error={errors.customerId?.message}
-                {...register('customerId')}
-              />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Customer / Customer <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  list="customers-list"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Select or type customer name"
+                  value={customerInput}
+                  onChange={(e) => handleCustomerChange(e.target.value)}
+                  required
+                />
+                <datalist id="customers-list">
+                  {customers.map((c) => (
+                    <option key={c.id} value={c.id.toString()}>
+                      {c.name}
+                    </option>
+                  ))}
+                </datalist>
+                {errors.customerId && (
+                  <p className="text-xs text-red-600 mt-1">{errors.customerId.message}</p>
+                )}
+                <p className="text-xs text-gray-500 mt-1">
+                  💡 Select from list or type new customer name
+                </p>
+              </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -269,29 +307,53 @@ export function InvoiceForm({ customers, initialData, onSubmit, onCancel }: Invo
         
         {!sectionsCollapsed.items && (
           <div className="px-6 pb-6">
-            {/* Quick Add Vehicle */}
+            {/* Quick Add Vehicle - Fillable with Select Support */}
             <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Quick Add Vehicle / Vehicle Jaldi Add Karein
               </label>
               <div className="flex gap-2">
-                <select
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-                  onChange={(e) => {
-                    if (e.target.value) {
-                      addVehicleToLineItems(e.target.value);
-                      e.target.value = ''; // Reset selection
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    list="vehicles-list"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Select vehicle or type description"
+                    value={vehicleInput}
+                    onChange={(e) => setVehicleInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && vehicleInput.trim()) {
+                        e.preventDefault();
+                        addVehicleToLineItems(vehicleInput);
+                        setVehicleInput('');
+                      }
+                    }}
+                  />
+                  <datalist id="vehicles-list">
+                    {trucks.map(t => (
+                      <option key={t.id} value={t.id.toString()}>
+                        {t.truck_type} - {t.plate_number} ({formatCurrencyWithSymbol(t.monthly_rate)}/month)
+                      </option>
+                    ))}
+                  </datalist>
+                </div>
+                <Button
+                  type="button"
+                  onClick={() => {
+                    if (vehicleInput.trim()) {
+                      addVehicleToLineItems(vehicleInput);
+                      setVehicleInput('');
                     }
                   }}
+                  className="whitespace-nowrap"
                 >
-                  {vehicleOptions.map(opt => (
-                    <option key={opt.value} value={opt.value}>{opt.label}</option>
-                  ))}
-                </select>
-                <span className="text-sm text-gray-600 self-center whitespace-nowrap">
-                  or add manually below
-                </span>
+                  <Plus size={18} className="mr-1" />
+                  Add
+                </Button>
               </div>
+              <p className="text-xs text-gray-600 mt-2">
+                💡 Select from list or type custom description, then click Add or press Enter
+              </p>
             </div>
 
             <div className="overflow-x-auto">
